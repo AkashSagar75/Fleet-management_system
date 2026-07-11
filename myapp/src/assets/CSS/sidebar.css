@@ -1,0 +1,111 @@
+ .sidebar {
+  width: 200px;
+  height: 100vh;
+  background: #14d8c4;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-collapsed {
+  width: 50px;
+}
+
+.sidebar-header {
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+
+.logo-text {
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+}
+
+.toggle-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.3);
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-wrapper {
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.menu-box {
+  
+}
+
+.parent-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  
+  border-radius: 16px;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.parent-menu:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.parent-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.menu-text {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.rotate-icon {
+  transform: rotate(180deg);
+  transition: 0.3s;
+}
+
+.child-wrapper {
+  margin-top: 10px;
+  margin-left: 40px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.child-menu {
+   
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 15px;
+  width: fit-content;
+}
+
+.child-menu:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.active-child {
+  
+  color: black;
+  font-weight: 600;
+}
