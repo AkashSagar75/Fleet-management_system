@@ -24,8 +24,8 @@ jobs:
 
             git pull origin main
 
-            cd backend
+            cd backedn
 
             npm install
 
-            pm2 restart backend
+            pm2 restart backedn
