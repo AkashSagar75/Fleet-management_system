@@ -9,21 +9,22 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-  const [authRole, setAuthRole] = useState({
+  const [User, setUser] = useState({
     role_id: null,
+     user: null,
   });
 
   useEffect(() => {
     const user = sessionStorage.getItem('user');
  if (user) {
-      setAuthRole({
+      setUser({
         user: JSON.parse(user),
       });
     } 
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authRole, setAuthRole }}>
+    <AuthContext.Provider value={{ User, setUser }}>
       {children}
     </AuthContext.Provider>
   );

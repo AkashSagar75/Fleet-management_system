@@ -5,6 +5,7 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import {
   LayoutDashboard,
   Building2,
+    Database, 
   Users,
   Bus,
   MapPinned,
@@ -34,6 +35,7 @@ import "../assets/CSS/sidebar.css";
 const icons = {
   LayoutDashboard,
   Building2,
+  Database,
   Users,
   Bus,
   MapPinned,
@@ -85,7 +87,7 @@ export default function Sidebar({
         company_type_id
       });
 
-      console.log("Fetched menus:", response); // Debugging log
+      
       if (response.success) {
         setMenus(response.data);
       }
