@@ -1,0 +1,402 @@
+ /* =========================================================
+   PERMISSION PAGE
+========================================================= */
+
+.permissionpage {
+  width: 100%;
+  min-height: 100%;
+
+  padding: 24px;
+
+  background: var(--page-bg);
+
+  border-radius: var(--radius-lg);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PAGE HEADING
+========================================================= */
+
+.permissionpage h2 {
+  margin: 0;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  line-height: 1.3;
+
+  color: var(--text-primary);
+}
+
+
+.permissionpage p {
+  margin: 6px 0 22px;
+
+  font-size: 14px;
+  font-weight: 400;
+
+  line-height: 1.5;
+
+  color: var(--text-secondary);
+}
+
+
+/* =========================================================
+   TOP FILTER ROW
+========================================================= */
+
+.topRow {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr
+    1fr
+    auto;
+
+  gap: 18px;
+
+  align-items: end;
+
+  padding: 20px;
+
+  background: var(--card-bg);
+
+  border: 1px solid var(--border-color);
+
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-card);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+.topFilter {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.topFilter label {
+  margin: 0;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  line-height: 1.4;
+
+  color: var(--text-primary);
+}
+
+
+/* =========================================================
+   INPUT + SELECT
+========================================================= */
+
+.topFilter select,
+.topFilter input {
+  width: 100%;
+
+  height: 42px;
+
+  padding: 0 12px;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 400;
+
+  color: var(--text-primary);
+
+  background-color: var(--card-bg);
+
+  border: 1px solid var(--border-input);
+
+  border-radius: var(--radius-sm);
+
+  outline: none;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.topFilter select {
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   SELECT OPTION
+========================================================= */
+
+.topFilter select option {
+  background-color: var(--card-bg);
+
+  color: var(--text-primary);
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   SELECT OPTION SELECTED
+========================================================= */
+
+.topFilter select option:checked {
+  background-color: var(--primary-color);
+
+  color: var(--text-primary);
+}
+
+
+/* =========================================================
+   SELECT OPTION HOVER
+========================================================= */
+
+.topFilter select option:hover {
+  background: var(--primary-color);
+
+  color: var(--text-primary);
+}
+
+
+/* =========================================================
+   INPUT PLACEHOLDER
+========================================================= */
+
+.topFilter input::placeholder {
+  color: var(--text-secondary);
+
+  opacity: 1;
+}
+
+
+/* =========================================================
+   INPUT + SELECT HOVER
+========================================================= */
+
+.topFilter select:hover,
+.topFilter input:hover {
+  border-color: var(--primary-color);
+}
+
+
+/* =========================================================
+   INPUT + SELECT FOCUS
+========================================================= */
+
+.topFilter select:focus,
+.topFilter input:focus {
+  border-color: var(--primary-color);
+
+  box-shadow:
+    0 0 0 3px var(--primary-light);
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.topFilter .btn-primary {
+  height: 42px;
+
+  padding: 0 22px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: none;
+
+  border-radius: var(--radius-sm);
+
+  background-color: var(--primary-color);
+
+  color: var(--text-primary);
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  outline: none;
+
+  box-sizing: border-box;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   BUTTON HOVER
+========================================================= */
+
+.topFilter .btn-primary:hover {
+  background-color: var(--primary-hover);
+
+  transform: translateY(-1px);
+
+  box-shadow: var(--shadow-primary);
+}
+
+
+/* =========================================================
+   BUTTON FOCUS
+========================================================= */
+
+.topFilter .btn-primary:focus-visible {
+  box-shadow:
+    0 0 0 3px var(--primary-light),
+    var(--shadow-primary);
+}
+
+
+/* =========================================================
+   BUTTON ACTIVE
+========================================================= */
+
+.topFilter .btn-primary:active {
+  transform: translateY(0);
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   BUTTON DISABLED
+========================================================= */
+
+.topFilter .btn-primary:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 992px) {
+
+  .permissionpage {
+    padding: 20px;
+  }
+
+  .topRow {
+    grid-template-columns:
+      1fr
+      1fr;
+
+    gap: 16px;
+  }
+
+  .topFilter:last-child {
+    align-items: flex-start;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+
+  .permissionpage {
+    padding: 15px;
+
+    border-radius: 0;
+  }
+
+  .permissionpage h2 {
+    font-size: 20px;
+  }
+
+  .permissionpage p {
+    margin-bottom: 18px;
+
+    font-size: 13px;
+  }
+
+  .topRow {
+    grid-template-columns: 1fr;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    border-radius: var(--radius-md);
+  }
+
+  .topFilter .btn-primary {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 375px) {
+
+  .permissionpage {
+    padding: 12px;
+  }
+
+  .topRow {
+    padding: 12px;
+  }
+
+  .topFilter select,
+  .topFilter input,
+  .topFilter .btn-primary {
+    height: 40px;
+  }
+}

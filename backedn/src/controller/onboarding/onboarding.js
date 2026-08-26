@@ -3,133 +3,229 @@ const express = require('express');
 const bcrypt = require("bcryptjs");
 const paymentService = require('../../services/payment.service');
 
-exports.createCompany = async (req, res) => {
-  try {
-    const { name, type, address, contact_person, phone, status } = req.body;
-    const sql = `INSERT INTO companies (name, type, address, contact_person, phone,status) values(?,?,?,?,?,?) `
-    await db.query(sql, [name, type, address, contact_person, phone, status]);
-    return res.status(201).json({
-      message: 'Basic',
-      success: true
-    })
-  } catch (err) {
-    console.error(err);
-    return res.status(401).json({
-      error: err.message
-    });
-  }
-};
 
-exports.createSubscription = async (req, res) => {
-  try {
-    const {
-      company_id, plan_id,
-      amount,
-      start_date,
-      end_date,
-      status
-    } = req.body;
-
-    const sql = `INSERT INTO company_subscriptions (company_id, plan_id,amount, start_date,end_date,status) values (?,?,?,?,?,?)`;
-
-    await db.query(sql, [company_id, plan_id, amount, start_date, end_date, status])
-    return res.status(201).json({ success: true, subscriptionId: result.insertId })
-
-  } catch (error) {
-    return res.status(500).json({
-
-      success: false,
-
-      message: err.message
-
-    });
-
-  }
-}
 
 exports.onboarding = async (req, res) => {
   const connection = await db.getConnection();
 
   try {
-
     await connection.beginTransaction();
-    const { company, subscription, subscription_plan
-,user, payment } = req.body;
-    const com_sql = `INSERT INTO companies (name, company_type_id, address, contact_person, phone,status) values(?,?,?,?,?,?) `
+
+    const { company,  role, subscription_plan,    user,   payment   } = req.body;
+
+    // =========================================
+    // 1. COMPANY STATUS
+    // =========================================
+
+    const companyStatus =
+      company.status === "active"  ? 1 : Number(company.status ?? 1);
+
+
+    // =========================================
+    // 2. USER STATUS
+    // =========================================
+
+    const userStatus = user.status === "active"  ? 1 : Number(user.status ?? 1);
+
+
+    // =========================================
+    // 3. CREATE COMPANY
+    // =========================================
+
+    const com_sql = `
+      INSERT INTO companies
+      (
+        company_name,
+        company_type_id,
+        address,
+        email,
+        phone,
+        gst_nummber,
+        pan_number,
+        company_code,
+        city,
+        state,
+        pincode,
+        status
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
     const [companyResult] = await connection.query(
       com_sql,
-      [company.name, company.company_type_id, company.address, company.contact_person, company.phone, company.status]
-
-    )
+      [
+        company.company_name,
+        company.company_type_id,
+        company.address,
+        company.email,
+        company.phone,
+        company.gst_nummber,
+        company.pan_number,
+        company.company_code,
+        company.city,
+        company.state,
+        company.pincode,
+        companyStatus
+      ]
+    );
 
     const companyId = companyResult.insertId;
-
-     const hashPassword = await bcrypt.hash(user.password,10);
-    const user_sql = `INSERT INTO users (company_id,role_id,name,email,password ,status) values(?,?,?,?,?,?)`;
-    await connection.query(
-      user_sql,
-      [companyId, user.role_id, user.name, user.email, hashPassword, user.status
+    const role_sql = `
+      INSERT INTO roles
+      (
+        company_id,
+        role_name,
+        is_system_role,
+        status
+      )
+      VALUES (?, ?, ?, ?)
+    `;
+    const [rolesResult] = await connection.query(
+      role_sql,
+      [
+        companyId,
+        role.role_name,
+        role.is_system_role ?? 0,
+        role.status ?? 1
       ]
-    )
-
-
-    const plan_sql = `INSERT INTO subscription_plans (name,price,user_limit,features) values(?,?,?,?)`
-    const [subscriptionPlanResults] = await connection.query(
-      plan_sql,[subscription_plan.name,subscription_plan.price,subscription_plan.user_limit,
-        
-        JSON.stringify(subscription_plan.features)]
-    )
-      const subscriptionPlaiId = subscriptionPlanResults.insertId;
-      
-    const sub_sql = `INSERT INTO company_subscriptions (company_id, plan_id, start_date, end_date) values (?,?,?,?)`;
-    const [subscriptionResult] = await connection.query(
-      sub_sql,
-      [companyId, subscriptionPlaiId, subscription.start_date, subscription.end_date]
     );
-    const subscriptionId = subscriptionResult.insertId;
 
-    const paymentResponse = await paymentService.createOrder({
-    company_id: companyId,
-    subscription_id: subscriptionId,
-    amount: subscription_plan.price,
-}
-, connection);
+    const rolesId = rolesResult.insertId;
+
+    const hashPassword = await bcrypt.hash(
+      user.password,
+      10
+    );
+
+    const user_sql = `
+      INSERT INTO users
+      (
+        company_id,
+        role_id,
+        first_name,
+        last_name,
+        phone,
+        email,
+        password,
+        status
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const [userResult] = await connection.query(
+      user_sql,
+      [
+        companyId,
+        rolesId,
+        user.first_name,
+        user.last_name,
+        user.phone,
+        user.email,
+        hashPassword,
+        userStatus
+      ]
+    );
+
+    const userId = userResult.insertId;
+
+
+    const plan_sql = `
+      INSERT INTO subscription_planss
+      (
+        company_id,
+        name,
+        billing_cycle,
+        price,
+        user_limit,
+        features,
+        start_date,
+        end_date,
+        status
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const [subscriptionPlanResults] =
+      await connection.query(
+        plan_sql,
+        [
+          companyId,
+
+          subscription_plan.name,
+
+          subscription_plan.billing_cycle,
+
+          subscription_plan.price,
+
+          subscription_plan.user_limit,
+
+          JSON.stringify(
+            subscription_plan.features || []
+          ),
+
+          subscription_plan.start_date || null,
+
+          subscription_plan.end_date || null,
+
+          "pending"
+        ]
+      );
+
+    const subscriptionId =
+      subscriptionPlanResults.insertId;
+    const paymentResponse =
+      await paymentService.createOrder(
+        {
+          company_id: companyId,
+
+          subscription_id: subscriptionId,
+
+          amount: Number(
+            subscription_plan.price
+          )
+        },
+        connection
+      );
     await connection.commit();
-
     return res.status(201).json({
       success: true,
       companyId,
+      userId,
+      rolesId,
       subscriptionId,
       order: paymentResponse.order,
       key: paymentResponse.key,
-      message: "Company Onboarding Completed",
+      message:
+        "Company onboarding initiated successfully"
     });
 
   } catch (error) {
 
     await connection.rollback();
+
+    console.error(
+      "ONBOARDING ERROR:",
+      error
+    );
+
     return res.status(500).json({
-
       success: false,
-
       message: error.message
-
     });
 
-  }
-  finally {
+  } finally {
 
     connection.release();
 
   }
-}
+};
 
 exports.companytypes = async (req, res) => {
   try {
-    const sql = `SELECT * FROM company_types`;  
+    const sql = `SELECT * FROM company_types`;
     const [types] = await db.query(sql);
     return res.status(200).json({
-      success: true,  
+      success: true,
       data: types
     });
   } catch (error) {
@@ -140,31 +236,40 @@ exports.companytypes = async (req, res) => {
   }
 };
 
-exports.getrole = async (req, res) => {
-try {
-  const slq = `Select * from roles 
-  WHERE name != 'super_admin' and name = 'company_admin'`;
+exports.getFeatrues = async (req, res) => {
+  try {
+    // const  sql = `select  name  from features`;
+    const sql = `
+    SELECT
+        f.id,
+        f.name,
+        f.code,
+        fp.monthly_price,
+        fp.yearly_price,
+        fp.monthly_validity_days,
+        fp.yearly_validity_days
+    FROM features AS f
+    INNER JOIN feature_pricing AS fp
+        ON fp.feature_id = f.id
+    WHERE f.status = 'active'
+      AND fp.status = 'active'
+    ORDER BY f.id ASC
+`;
+    const [features] = await db.query(sql);
+    return res.status(200).json({
+      success: true,
+      message: "All features available",
+      data: features
+    })
+  } catch (error) {
 
-   const [roles] = await db.query(slq);
-   return res.status(200).json({
-    success: true,
-    message: "Role fetched successfully",
-    data: roles
-  })  
-    
-      
-    
-
-} catch (error) {
-   return res.status(500).json({
+    return res.status(500).json({
 
       success: false,
 
       message: error.message
 
     });
-  
-}
 
- }
-  
+  }
+}

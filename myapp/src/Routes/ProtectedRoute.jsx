@@ -7,8 +7,7 @@ export default function ProtectedRoute({
   children,
 }) {
 
-  const token =
-    sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("accessToken");
 
   if (!token) {
     return <Navigate to="/" />;

@@ -11,6 +11,6 @@ client.on("connect", () => {
     console.log("Redis Connected");
 });
 client.on('failed',()=>{
-    console.log("redis connection failed")
+     console.log("redis connection failed")
 })
 module.exports = client;

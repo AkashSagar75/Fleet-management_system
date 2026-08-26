@@ -8,7 +8,6 @@ const {userQueue} = require('../queue/userqueue');
 const {generateAccessToken,generateRefreshToken }= require('../utils/token')
 const {transtportmail,sendOtp,resetPassword} = require('../utils/sendEmail');
 
-
 exports.userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -47,15 +46,11 @@ WHERE u.email = ?
 
      const isMatch = await bcrypt.compare(password, user.password);
 
-    // if (!isMatch) {
-    //   return res.status(401).json({ message: "Invalid credentials" });
-    // }
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
-    if (password !== user.password) {
-  return res.status(401).json({
-    message: "Invalid credentials"
-  });
-}
+    
     // 🔐 tokens
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);

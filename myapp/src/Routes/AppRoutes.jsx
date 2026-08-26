@@ -1,46 +1,47 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate
-} from "react-router-dom";
+import { BrowserRouter as Router,  Routes,  Route, } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import ErrorBoundary from "../Components/ErrorBoundary";
+import ProtectedRoute from "./ProtectedRoute";
+import Loading from "../Components/Loading";
 
-import Login from "../Layout/Login";
-import Forgetpassword from "../Layout/Forgetpassword";
-import Sidebar from "../Components/Sidebar";
+ const Login = lazy(()=> import('../Layout/Login'));
+const Forgetpassword = lazy(()=> import('../Layout/Forgetpassword'));
+// const Dashboard = lazy(() => import("../Layout/Dashboard") );
 import Dashboard from "../Layout/Dashboard";
+const Onboarding = lazy(() => import("../Modules/SuperAdmin/Company/Onboarding") );
+const CompanyList = lazy(() => import("../Modules/SuperAdmin/Company/CompanyList") );
+import HomeDashboard  from "../Layout/HomeDahboard";
+const Vehicle = lazy(() =>  import("../Modules/Transport/Vehicle") );
+const VehicleType = lazy(() => import("../Modules/Transport/VehicleType") );
+const PermissionPage = lazy(() => import("../pages/Permission/PermissionPage") );
+const User = lazy(() => import("../pages/User/User") );
 
-import { useUser } from "../Context/role";
-// import Onboarding from "../Components/Onboarding";
-import Onboarding from "../Modules/SuperAdmin/Company/Onboarding";
-import CompanyList from "../Modules/SuperAdmin/Company/CompanyList";
-// import CompanyList from "../Components/CompanyList";
-import HomeDashboard from "../Components/HomeDahboard";
-import TopNavbar from "../Layout/TopNavbar";
-import Vehicle from "../Modules/Transport/Vehicle";
-import VehicleType from "../Modules/Transport/VehicleType";
-
-export default function AppRoutes() {
-
-  const { authRole } = useUser();
+export default function AppRoutes() {  
   return (
-    <>
+    <ErrorBoundary>
+      <suspense fallback={<Loading />}
+      > 
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/forgetpassword" element={<Forgetpassword />} />
-        <Route path="/dashboard/:role_id/:company_type_id/*" element={<Dashboard />}>
-        
+        <Route path="/dashboard/:role_id/:company_type_id/*" element={ 
+          <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>}>
+          {/* Super Admin Routes */}
+          <Route path="companies" element={<Onboarding />} />
+          <Route path="user" element={<User />} />
           <Route index element={<HomeDashboard />} />
           <Route path="dashboard" element={<HomeDashboard />} />
-          <Route path="companies/onboarding" element={<Onboarding />} />
-          
-          <Route path="companies/list" element={<CompanyList />} />
+          <Route path="permissions" element={<PermissionPage />} />
           <Route  path="master/vehicles" element ={<Vehicle/>}/>
-          <Route  path="master/vehicle-types" element ={<VehicleType/>}/>
+          <Route  path="vehicle-types" element ={<VehicleType/>}/>
         </Route>
       </Routes>
     </Router>
-    </>
+    </suspense>
+    </ErrorBoundary >
+
   );
 }

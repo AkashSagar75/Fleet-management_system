@@ -17,8 +17,6 @@ exports.createOrder = async (req, res) => {
 exports.verifyPayment = async (req, res) => {
   try {
     const {
-      company_id,
-      subscription_id,
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
@@ -40,13 +38,46 @@ exports.verifyPayment = async (req, res) => {
     try {
       await connection.beginTransaction();
 
-      await connection.query(
-        `UPDATE company_payments SET transaction_id=?, razorpay_signature=?, payment_status='success' WHERE order_id=?`,
-        [razorpay_payment_id, razorpay_signature, razorpay_order_id]
+      const [payments] = await connection.query(
+        `SELECT subscription_id FROM payments WHERE order_id=? LIMIT 1`,
+        [razorpay_order_id]
       );
+      if (!payments.length) {
+        throw new Error("Payment order was not found");
+      }
 
+      const { subscription_id } = payments[0];
+
+       await connection.query(
+  `
+  UPDATE payments
+  SET
+    transaction_id = ?,
+    razorpay_signature = ?,
+    payment_status = 'success',
+    paid_at = NOW()
+  WHERE order_id = ?
+    AND payment_status = 'pending'
+  `,
+  [
+    razorpay_payment_id,
+    razorpay_signature,
+    razorpay_order_id
+  ]
+);
       await connection.query(
-        `UPDATE company_subscriptions SET start_date=CURDATE(), end_date=DATE_ADD(CURDATE(), INTERVAL 1 MONTH) WHERE id=?`,
+        `UPDATE subscription_planss
+         SET status='active',
+             start_date=COALESCE(start_date, CURDATE()),
+             end_date=COALESCE(
+               end_date,
+               CASE
+                 WHEN billing_cycle='yearly'
+                   THEN DATE_ADD(CURDATE(), INTERVAL 1 YEAR)
+                 ELSE DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
+               END
+             )
+         WHERE id=?`,
         [subscription_id]
       );
 

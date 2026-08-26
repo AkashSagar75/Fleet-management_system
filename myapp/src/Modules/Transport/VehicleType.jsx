@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useUser } from '../../Context/role'
-import { getVehicleTypes } from "../../Api/Transport/vehicle";
+import { getVehicleTypes, curdvehicle } from "../../Api/Transport/vehicle";
 import notificationService from "../../Common/notificationService";
 import {
     FaTruck,
@@ -12,15 +12,91 @@ import {
     FaFileImport,
     FaFileExport, FaRegEye
 } from "react-icons/fa";
+
+
+const vehicleTypeColumns = [
+  {
+    key: "id",
+    label: "No.",
+    width: "80px",
+  },
+
+  {
+    key: "name",
+    label: "Vehicle Type",
+    width: "180px",
+  },
+
+  {
+    key: "description",
+    label: "Description",
+  },
+
+  {
+    key: "created_at",
+    label: "Generate Date",
+
+    render: (row) =>
+      row.created_at
+        ? new Date(row.created_at)
+            .toLocaleDateString("en-GB")
+            .replace(/\//g, "-")
+        : "-",
+  },
+
+  {
+    key: "updated_at",
+    label: "Updated Date",
+
+    render: (row) =>
+      row.updated_at
+        ? new Date(row.updated_at)
+            .toLocaleDateString("en-GB")
+            .replace(/\//g, "-")
+        : "-",
+  },
+
+  {
+    key: "status",
+    label: "Status",
+
+    render: (row) => (
+      <span
+        className={`vehicle-status ${
+          row.status === "Active"
+            ? "active"
+            : row.status === "Inactive"
+            ? "inactive"
+            : "pending"
+        }`}
+      >
+        {row.status}
+      </span>
+    ),
+  },
+];
+import CommonTable from "../../commonComponents/CommonTable";
 import { FiSearch, FiPlus } from "react-icons/fi";
 import { BiEdit } from "react-icons/bi";
 import { MdDeleteForever } from "react-icons/md";
 import '../../assets/CSS/common.css'
 
+
 export default function VehicleType() {
     const [vehicleTypes, setVehicleTypes] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [mode, setMode] = useState("add");
+    const [search, setSearch] = useState({
+        id: "",
+        name: "",
+        description: "",
+        created_at: "",
+        updated_at: "",
+        status: "",
+    });
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -65,18 +141,29 @@ export default function VehicleType() {
         setOpenModal(true);
 
     }
+    const handleDelete = async (data) => {
+        try {
+            let payload = {}
+            payload = { action: "delete", id: data.id, };
+            await curdvehicle(payload);
+            notificationService.success(" Vehicle Type Delete Successfully");
+            fetchVehicleTypes();
+        } catch (error) {
+            notificationService.error(error.message);
+
+        }
+
+
+    }
 
     const handleEdit = (row) => {
-
         setMode("edit");
-
         setFormData({
             id: row.id,
             name: row.name,
             description: row.description,
-            status: row.status
+            status: row.status,
         });
-
         setOpenModal(true);
 
     }
@@ -84,197 +171,150 @@ export default function VehicleType() {
     const companyId = user?.User?.user?.company_id;
     const createdBy = user?.User?.user?.id;
 
+
+    const fetchVehicleTypes = async () => {
+        try {
+
+            if (!companyId || !createdBy) return;
+
+            const response = await getVehicleTypes({
+                company_id: companyId,
+                created_by: createdBy,
+                page,
+                limit,
+                id: search.id,
+                name: search.name,
+                description: search.description,
+                created_at: search.created_at,
+                updated_at: search.updated_at,
+                status: search.status,
+            });
+            console.log(search);
+            console.log(response)
+
+            setVehicleTypes(response.data);
+            setTotalPages(response.pagination.totalPages);
+
+        } catch (error) {
+            console.log(error);
+            notificationService.error(error?.message || "Something went wrong");
+        }
+    };
+
     useEffect(() => {
-        console.log("API CALLED");
-        const fetchVehicleTypes = async () => {
-            try {
-
-                if (!companyId || !createdBy) return;
-                const response = await getVehicleTypes({
-                    company_id: companyId,
-                    created_by: createdBy,
-                });
-
-
-                setVehicleTypes(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
         fetchVehicleTypes();
-    }, [companyId, createdBy]);
+    }, [companyId,
+        createdBy,
+        page,
+        limit,
+        search.id,
+        search.name,
+        search.description,
+        search.status,
+        search.created_at,
+        search.updated_at]);
 
+    const okbutton = async (e) => {
+        e.preventDefault();
 
+        try {
+
+            let payload = {};
+
+            if (mode === "add") {
+
+                payload = {
+                    action: "create",
+                    name: formData.name,
+                    description: formData.description,
+                    status: formData.status,
+                    company_id: user?.User?.user?.company_id,
+                    created_by: user?.User?.user?.id,
+                };
+
+            } else {
+
+                payload = {
+                    action: "update",
+                    id: formData.id, // update ke liye id zaruri hai
+                    name: formData.name,
+                    description: formData.description,
+                    status: formData.status,
+                    company_id: user?.User?.user?.company_id,
+                    created_by: user?.User?.user?.id,
+                };
+
+            }
+
+            const res = await curdvehicle(payload);
+
+            if (mode === "add") {
+                notificationService.success("Vehicle Type Added Successfully");
+            } else {
+                notificationService.success("Vehicle Type Updated Successfully");
+            }
+
+            setOpenModal(false);
+            fetchVehicleTypes();
+
+        } catch (error) {
+            notificationService.error("Something went wrong");
+        }
+    };
     return (
         <>
-            <div className="flex justify-between gap-5">
-                <h2 className=" text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight m-8">
-                    Vehicle Type
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+     <CommonTable
 
-                    <div
+        columns={vehicleTypeColumns}
 
-                        className="bg-white w-[250px] h-[130px] rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition duration-300 p-5 flex items-center gap-4"
-                    >
-                        <div
-                            className={`w-14 h-14 rounded-xl mr-4   flex items-center justify-center text-white`}
-                        >
-                            item.icon
-                        </div>
+        data={vehicleTypes}
 
-                        <div>
-                            <p className="text-gray-500 text-sm">Total Vehicle Type</p>
+        loading={false}
 
-                            <h2 className="text-3xl font-bold text-gray-800">
-                                22
-                            </h2>
+        emptyMessage="No vehicle types found"
 
-                            <p className="text-xs text-gray-400">
-                                All Type
-                            </p>
-                        </div>
-                    </div>
+        actions={[
+          {
+            key: "view",
+            label: "View",
+            icon: <FaRegEye />,
+            onClick: handleView,
+          },
 
-                </div>
-            </div>
+          {
+            key: "edit",
+            label: "Edit",
+            icon: <BiEdit />,
+            onClick: handleEdit,
+          },
 
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 py-4 mb-6">
+          {
+            key: "delete",
+            label: "Delete",
+            icon: <MdDeleteForever />,
+            type: "delete",
+            onClick: handleDelete,
+          },
+        ]}
 
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        addButton={{
+          label: "Add New",
+          onClick: handleAdd,
+        }}
 
-                    {/* Add Button */}
-                    <button
-                        onClick={handleAdd}
-                        className="flex w-34 h-11 left-11 items-center gap-2 bg-[#14d8c4] hover:bg-[#10c3b1] text-white font-semibold px-5 py-2.5 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg">
-                        <FiPlus size={18} />
-                        Add New
-                    </button>
+        pagination={{
+          page: page,
+          total: vehicleTypes.length,
+          totalPages: totalPages,
+        }}
 
-                    {/* Search Box */}
-                    <div className="relative w-full sm:w-80">
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className="w-full h-11 rounded-xl border border-gray-300 bg-gray-50 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-400 transition"
-                        />
+        onPageChange={(newPage) => {
+          setPage(newPage);
+        }}
 
-                        <FiSearch
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-                            size={18}
-                        />
+      />
 
-                    </div>
 
-                </div>
-
-            </div>
-
-            <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-md">
-
-                <table className="min-w-full border-collapse">
-
-                    {/* Header */}
-                    <thead className="bg-[#14d8c4] text-white">
-
-                        <tr>
-
-                            <th className="border border-gray-200 px-4 py-3 w-21  ">
-                                Action
-                            </th>
-
-                            <th className="border border-gray-200 px-4 py-3  w-18">
-                                No.
-                            </th>
-
-                            <th className="border border-gray-200 px-4 py-3 w-25 ">
-                                Vehicle Type
-                            </th>
-
-                            <th className="border border-gray-200 px-4 py-3  ">
-                                Description
-                            </th>
-
-                            <th className="border border-gray-200 px-4 py-3 w-15 ">
-                                Status
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    {/* Body */}
-                    <tbody>
-
-                        {vehicleTypes.map((data, index) => (
-
-                            <tr
-                                key={data.id}
-                                className="hover:bg-cyan-50 transition duration-200"
-                            >
-
-                                <td className="border border-gray-200 px-4 py-3">
-
-                                    <div className="flex  gap-2">
-
-                                        <button
-                                            onClick={() => handleView(data)}
-                                            className="w-9 h-9 rounded-lg  bg-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white  flex items-center justify-center">
-                                            <FaRegEye />
-                                        </button>
-
-                                        <button
-                                            onClick={() => handleEdit(data)}
-                                            className="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white flex items-center justify-center">
-                                            <BiEdit />
-                                        </button>
-
-                                        <button className="w-9 h-9 rounded-lg bg-rose-100 hover:bg-rose-600  hover:text-white text-rose-600 flex items-center justify-center">
-                                            <MdDeleteForever />
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                                <td className="border border-gray-200 px-4 py-3  ">
-                                    {data.id}
-                                </td>
-
-                                <td className="border border-gray-200 px-4 py-3">
-                                    {data.name}
-                                </td>
-
-                                <td className="border border-gray-200 px-4 py-3">
-                                    {data.description}
-                                </td>
-
-                                <td className="border border-gray-200 px-4 py-3  ">
-
-                                    <span
-                                        className={`px-3 py-1 rounded-full text-xs font-semibold
-                                                 ${data.status === "Active"
-                                                ? "bg-green-100 text-green-700"
-                                                : data.status === "Inactive"
-                                                    ? "bg-red-100 text-red-700"
-                                                    : "bg-yellow-100 text-yellow-700"
-                                            }`}
-                                    >
-                                        {data.status}
-                                    </span>
-
-                                </td>
-
-                            </tr>
-
-                        ))}
-
-                    </tbody>
-
-                </table>
-
-            </div>
 
             {openModal && (
                 <div className="modal_overlay">
@@ -284,28 +324,7 @@ export default function VehicleType() {
                         <div className="Header">
 
                             <h2>
-
-                                {
-                                    mode === "add"
-
-                                        ?
-
-                                        "Add Vehicle Type"
-
-                                        :
-
-                                        mode === "edit"
-
-                                            ?
-
-                                            "Edit Vehicle Type"
-
-                                            :
-
-                                            "View Vehicle Type"
-
-                                }
-
+                                {mode === "add" ? "Add Vehicle Type" : mode === "edit" ? "Edit Vehicle Type" : "View Vehicle Type"}
                             </h2>
 
                             <button
@@ -329,8 +348,8 @@ export default function VehicleType() {
                                     <div className="input_wrap">
                                         <input
                                             type="text"
-
                                             name="name"
+                                            disabled={mode === "view"}
                                             value={formData.name}
                                             onChange={handleChange}
                                             placeholder="Enter Vehicle Type"
@@ -352,6 +371,8 @@ export default function VehicleType() {
                                         <textarea
                                             rows="4"
                                             name="description"
+                                            disabled={mode === "view"}
+
                                             value={formData.description}
                                             onChange={handleChange}
                                             placeholder="Enter Description"
@@ -371,6 +392,7 @@ export default function VehicleType() {
                                     <div className="input_wrap">
 
                                         <select className="w-full border rounded-xl px-4 py-3"
+                                            disabled={mode === "view"}
                                             name="status"
                                             value={formData.status}
                                             onChange={handleChange}
@@ -397,8 +419,17 @@ export default function VehicleType() {
 
                                     <button
                                         className=""
+                                        disabled={mode == 'view'}
+                                        onClick={okbutton}
+
                                     >
-                                        Save
+                                        {
+                                            mode === "add"
+                                                ? "OK"
+                                                : mode === "edit"
+                                                    ? "Save"
+                                                    : "Close"
+                                        }
                                     </button>
 
                                 </div>
