@@ -14,7 +14,13 @@ const port = process.env.SERVER_PORT;
 
 const cors = require('cors');
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+ app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://15.207.249.200"
+  ],
+  credentials: true
+}));
 app.use('/auth', userApi);
 app.use('/menu', menuApi);
 app.use('/company', companyApi);

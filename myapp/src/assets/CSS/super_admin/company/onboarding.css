@@ -211,9 +211,12 @@
 =================================== */
 
 .company-form {
-   
+  display: grid;
+
+  gap: 21px;
  align-items: center;
 }
+
 
 
 /* ===================================
@@ -910,4 +913,555 @@
   .form-group label {
     font-size: 14px;
   }
+}
+
+  /* =========================================
+   SUBSCRIPTION PAGE
+========================================= */
+ /* =========================================
+   SUBSCRIPTION PAGE
+========================================= */
+
+.SubscriptionPage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  width: 100%;
+  padding: 0 68px;
+  margin-top: 25px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   TOP SETTINGS
+   User Limit / Start Date / End Date
+========================================= */
+
+.SubscriptionPage .topclass {
+  grid-column: 1 / -1;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  width: 100%;
+
+  padding: 22px 25px;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe3e8;
+  border-radius: 14px;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+
+/* =========================================
+   FORM GROUP
+========================================= */
+
+.SubscriptionPage .topclass .form-group {
+  width: 100%;
+  margin: 0;
+}
+
+.SubscriptionPage .topclass .form-group label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+
+/* =========================================
+   INPUT WRAP
+========================================= */
+
+.SubscriptionPage .topclass .input-wrap {
+  width: 100%;
+}
+
+
+/* =========================================
+   SELECT + DATE INPUT
+========================================= */
+
+.SubscriptionPage .topclass select,
+.SubscriptionPage .topclass input[type="date"] {
+  width: 100%;
+  height: 46px;
+
+  padding: 0 14px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #374151;
+
+  font-size: 14px;
+
+  outline: none;
+
+  box-sizing: border-box;
+
+  transition: all 0.2s ease;
+}
+
+
+.SubscriptionPage .topclass select:focus,
+.SubscriptionPage .topclass input[type="date"]:focus {
+  border-color: #2563eb;
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+/* =========================================
+   LEFT + RIGHT BOX
+========================================= */
+
+.SubscriptionPage .Leftbox,
+.SubscriptionPage .Rightbox {
+  width: 100%;
+  min-width: 0;
+  min-height: 450px;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe3e8;
+  border-radius: 14px;
+
+  padding: 25px;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+
+/* =========================================
+   HEADINGS
+========================================= */
+
+.SubscriptionPage .Leftbox > h4,
+.SubscriptionPage .Rightbox > h4 {
+  margin: 0 0 22px 0;
+
+  font-size: 18px;
+  line-height: 24px;
+
+  font-weight: 700;
+
+  color: #111827;
+}
+
+
+/* =========================================
+   FEATURE LIST
+========================================= */
+
+.SubscriptionPage .Leftbox > div {
+  max-height: 360px;
+
+  overflow-y: auto;
+
+  padding-right: 6px;
+}
+
+
+/* =========================================
+   FEATURE ITEM
+========================================= */
+
+.SubscriptionPage .feature-item {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 64px;
+
+  padding: 10px 15px;
+  margin-bottom: 10px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #e1e5ea;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  transition: all 0.2s ease;
+}
+
+
+.SubscriptionPage .feature-item:hover {
+  border-color: #b9c4d0;
+
+  background: #fafbfc;
+}
+
+
+/* =========================================
+   CHECKBOX
+========================================= */
+
+.SubscriptionPage .feature-item input[type="checkbox"] {
+  width: 19px;
+  height: 19px;
+
+  flex-shrink: 0;
+
+  margin: 0;
+
+  cursor: pointer;
+
+  accent-color: #2563eb;
+}
+
+
+/* =========================================
+   FEATURE NAME
+========================================= */
+
+.SubscriptionPage .feature-item label {
+  flex: 1;
+
+  margin: 0;
+
+  padding: 0 10px;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  color: #374151;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   FEATURE PRICE
+========================================= */
+
+.SubscriptionPage .feature-item > p {
+  margin: 0;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  color: #2563eb;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   RIGHT BOX
+========================================= */
+
+.SubscriptionPage .Rightbox {
+  display: flex;
+
+  flex-direction: column;
+}
+
+
+/* =========================================
+   SELECTED FEATURE LIST
+========================================= */
+
+.SubscriptionPage .Rightbox > div:first-of-type {
+  max-height: 300px;
+
+  overflow-y: auto;
+
+  padding-right: 5px;
+
+  margin-bottom: 10px;
+}
+
+
+/* =========================================
+   SELECTED FEATURE ITEM
+========================================= */
+
+.SubscriptionPage .Rightbox .feature-item {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  min-height: 58px;
+
+  padding: 12px 15px;
+
+  margin-bottom: 10px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 10px;
+}
+
+
+.SubscriptionPage .Rightbox .feature-item h4 {
+  margin: 0;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  color: #374151;
+}
+
+
+.SubscriptionPage .feature-price {
+  font-size: 14px;
+
+  font-weight: 700;
+
+  color: #111827;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.SubscriptionPage .Rightbox .text-center {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 180px;
+
+  color: #6b7280;
+
+  font-size: 16px;
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.SubscriptionPage .summary-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 11px 0;
+
+  font-size: 14px;
+
+  color: #6b7280;
+}
+
+
+.SubscriptionPage .summary-row span:last-child {
+  color: #374151;
+
+  font-weight: 500;
+}
+
+
+/* =========================================
+   TOTAL
+========================================= */
+
+.SubscriptionPage .summary-total {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 8px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #e5e7eb;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  color: #111827;
+}
+
+
+.SubscriptionPage .summary-total span:last-child {
+  font-size: 20px;
+
+  font-weight: 700;
+
+  color: #111827;
+}
+
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+.SubscriptionPage .Leftbox > div::-webkit-scrollbar,
+.SubscriptionPage .Rightbox > div::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+.SubscriptionPage .Leftbox > div::-webkit-scrollbar-track,
+.SubscriptionPage .Rightbox > div::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.SubscriptionPage .Leftbox > div::-webkit-scrollbar-thumb,
+.SubscriptionPage .Rightbox > div::-webkit-scrollbar-thumb {
+  background: #c7cdd4;
+
+  border-radius: 10px;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .SubscriptionPage {
+    padding: 0 35px;
+  }
+
+}
+
+
+/* =========================================
+   SMALL TABLET
+========================================= */
+
+@media (max-width: 900px) {
+
+  .SubscriptionPage .topclass {
+    grid-template-columns: 1fr 1fr;
+  }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 800px) {
+
+  .SubscriptionPage {
+    grid-template-columns: 1fr;
+
+    padding: 0 20px;
+
+    gap: 20px;
+  }
+
+
+  .SubscriptionPage .topclass {
+    grid-column: auto;
+
+    grid-template-columns: 1fr;
+
+    padding: 20px;
+  }
+
+
+  .SubscriptionPage .Leftbox,
+  .SubscriptionPage .Rightbox {
+    min-height: auto;
+
+    padding: 20px;
+  }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 500px) {
+
+  .SubscriptionPage {
+    padding: 0 15px;
+  }
+
+
+  .SubscriptionPage .Leftbox,
+  .SubscriptionPage .Rightbox {
+    padding: 18px;
+  }
+
+
+  .SubscriptionPage .topclass {
+    padding: 18px;
+  }
+
+}
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    margin:18px 0;
+    font-size:16px;
+}
+
+.summary-total{
+    display:flex;
+    justify-content:space-between;
+    margin-top:20px;
+    padding-top:18px;
+    border-top:2px dashed #ddd;
+    font-size:22px;
+    font-weight:700;
+    color:#16a34a;
+}
+.billing-card{
+    display:flex; 
+    width: 16%;
+    background:#d4dae7;
+    border-radius:12px;
+    
+}
+
+.billing-card button{
+    padding:12px 30px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.billing-card button.active{
+    background:#14d8c4;
+     border-radius:12px;
+    color:white;
 }

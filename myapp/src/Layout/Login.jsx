@@ -4,7 +4,7 @@ import "../Layout/login.css";
 import { userLogin, getrole } from "../Api/auth.api";
 import notificationService from "../Common/notificationService";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Sidebar from "../Components/Sidebar";
+import Sidebar from "./Sidebar";
 
 
 export default function Login() {

@@ -2,12 +2,16 @@ import API from "./axios";
 import notificationService from "../Common/notificationService";
 
  
-export const createCompany = async(data)=>{
+export const onboarding1 = async(data)=>{
 try {
  const res = await API.post(`/company/onboarding`,data);
 return  res.data
 } catch (error) {
-   notificationService.error(error.message)
+  notificationService.error(error.response?.data?.message || error.message)
+  return {
+    success: false,
+    message: error.response?.data?.message || error.message,
+  };
 }
 }
 
@@ -19,7 +23,7 @@ try {
 } catch (error) {
    return {
          success: false,
-         message: error.res?.data?.message
+         message: error.response?.data?.message || error.message
       };
 }
 }

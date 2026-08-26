@@ -6,7 +6,7 @@ from "../Common/notificationService";
 
 // MAIN API
 const API = axios.create({
-  baseURL: "http://localhost:8087",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8087",
 });
 
 
@@ -79,7 +79,7 @@ API.interceptors.response.use(
 
         // REFRESH TOKEN API
         const res = await axios.post(
-          "http://localhost:8087/auth/refreshToken",
+           `${import.meta.env.VITE_API_URL}/auth/refreshToken`,
           {
             refreshToken,
           }
