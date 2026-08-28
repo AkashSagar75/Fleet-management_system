@@ -3,11 +3,12 @@ import   {useState} from "react";
 import { useNavigate } from "react-router-dom";
  import {logout} from '../Api/auth.api'
 import {  Bell, Moon,} from "lucide-react";
- 
+import { useSelector } from "react-redux";
 import notificationService from "../Common/notificationService";
 
 export default function TopNavbar({collapsed,}) 
 {
+    const user = useSelector((state) => state.user);
    const navigate = useNavigate();
  const [sidedropdown, setSideDropdown] = useState(false)
  function onfocusfunction()
@@ -23,9 +24,7 @@ const logoutf = async ( ) =>
   try {
     console.log("token",refreshToken);
      const res = await logout(refreshToken);
-
         sessionStorage.clear();
-
         navigate("/");
     
   } catch (error) {
@@ -36,11 +35,11 @@ const logoutf = async ( ) =>
 
   return (
     <>
-     <header className=" h-[55px]  bg-white  border-b  flex items-center justify-between m-5">
+     <header className=" h-auto  bg-white  border-b  flex items-center justify-between m-5">
 
   {/* LEFT */}
   <div>
-    <h1 className="text-2xl font-bold text-slate-800"> Corevio  </h1>
+    <h1 className="text-2xl font-bold text-slate-800">  {user?.name } </h1>
   </div>
 
   {/* RIGHT */}
@@ -57,10 +56,13 @@ const logoutf = async ( ) =>
         2
       </span>
     </button>
-
-    <img onClick={onfocusfunction}  src="https://i.pravatar.cc/150?img=12" alt="" className=" w-12 h-12 rounded-full  object-cover border-2 border-teal-400
+      <div>
+<img onClick={onfocusfunction}  src="https://i.pravatar.cc/150?img=12" alt="" className=" w-12 h-12 rounded-full  object-cover border-2 border-teal-400
       "
     />
+    <p>
+    </p>      </div>
+    
 
   </div>
 </header>

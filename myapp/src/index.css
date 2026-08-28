@@ -1,2 +1,47 @@
  @import "tailwindcss";
  @import './styles/variables.css';
+ 
+
+ .pages_container {
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  padding: 30px;
+  background: #f6f8fb;
+  box-sizing: border-box;
+}
+
+.pages_container h1 {
+  margin: 0 0 25px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1f2937;
+  letter-spacing: -0.5px;
+}
+
+/* Table wrapper ke andar agar CommonTable wrapper hai */
+.pages_container > *:not(h1) {
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pages_container {
+    padding: 20px 15px;
+  }
+
+  .pages_container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pages_container {
+    padding: 15px 10px;
+  }
+
+  .pages_container h1 {
+    font-size: 21px;
+  }
+}

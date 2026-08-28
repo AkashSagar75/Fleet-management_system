@@ -8,7 +8,7 @@ class Create_by_CAdmin_user_Controller {
 
   createUser = async (req, res) => {
 
-    const companyId = req.params.companyId;
+    const { companyId } = req.body;
 
     const connection = await db.getConnection();
 
@@ -54,5 +54,4 @@ class Create_by_CAdmin_user_Controller {
   };
 }
 
-module.exports =
-  Create_by_CAdmin_user_Controller;
+module.exports = Create_by_CAdmin_user_Controller;
