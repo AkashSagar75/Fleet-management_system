@@ -15,71 +15,70 @@ import {
 
 
 const vehicleTypeColumns = [
-  {
-    key: "id",
-    label: "No.",
-    width: "80px",
-  },
+    {
+        key: "id",
+        label: "No.",
+        width: "80px",
+    },
 
-  {
-    key: "name",
-    label: "Vehicle Type",
-    width: "180px",
-  },
+    {
+        key: "name",
+        label: "Vehicle Type",
+        width: "180px",
+    },
 
-  {
-    key: "description",
-    label: "Description",
-  },
+    {
+        key: "description",
+        label: "Description",
+    },
 
-  {
-    key: "created_at",
-    label: "Generate Date",
+    {
+        key: "created_at",
+        label: "Generate Date",
 
-    render: (row) =>
-      row.created_at
-        ? new Date(row.created_at)
-            .toLocaleDateString("en-GB")
-            .replace(/\//g, "-")
-        : "-",
-  },
+        render: (row) =>
+            row.created_at
+                ? new Date(row.created_at)
+                    .toLocaleDateString("en-GB")
+                    .replace(/\//g, "-")
+                : "-",
+    },
 
-  {
-    key: "updated_at",
-    label: "Updated Date",
+    {
+        key: "updated_at",
+        label: "Updated Date",
 
-    render: (row) =>
-      row.updated_at
-        ? new Date(row.updated_at)
-            .toLocaleDateString("en-GB")
-            .replace(/\//g, "-")
-        : "-",
-  },
+        render: (row) =>
+            row.updated_at
+                ? new Date(row.updated_at)
+                    .toLocaleDateString("en-GB")
+                    .replace(/\//g, "-")
+                : "-",
+    },
 
-  {
-    key: "status",
-    label: "Status",
+    {
+        key: "status",
+        label: "Status",
 
-    render: (row) => (
-      <span
-        className={`vehicle-status ${
-          row.status === "Active"
-            ? "active"
-            : row.status === "Inactive"
-            ? "inactive"
-            : "pending"
-        }`}
-      >
-        {row.status}
-      </span>
-    ),
-  },
+        render: (row) => (
+            <span
+                className={`vehicle-status ${row.status === "Active"
+                        ? "active"
+                        : row.status === "Inactive"
+                            ? "inactive"
+                            : "pending"
+                    }`}
+            >
+                {row.status}
+            </span>
+        ),
+    },
 ];
 import CommonTable from "../../commonComponents/CommonTable";
 import { FiSearch, FiPlus } from "react-icons/fi";
 import { BiEdit } from "react-icons/bi";
 import { MdDeleteForever } from "react-icons/md";
-import '../../assets/CSS/common.css'
+ 
 
 
 export default function VehicleType() {
@@ -263,59 +262,57 @@ export default function VehicleType() {
     };
     return (
         <>
-     <CommonTable
 
-        columns={vehicleTypeColumns}
+            <div className="pages_container">
+                <h1>Create Vehicle Type</h1>
+                <p>Manages the Vehicle Types</p>
+                <CommonTable columns={vehicleTypeColumns}
 
-        data={vehicleTypes}
+                    data={vehicleTypes}
 
-        loading={false}
+                    loading={false}
 
-        emptyMessage="No vehicle types found"
+                    emptyMessage="No vehicle types found"
 
-        actions={[
-          {
-            key: "view",
-            label: "View",
-            icon: <FaRegEye />,
-            onClick: handleView,
-          },
+                    actions={[
+                        {
+                            key: "view",
+                            label: "View",
+                            icon: <FaRegEye />,
+                            onClick: handleView,
+                        },
 
-          {
-            key: "edit",
-            label: "Edit",
-            icon: <BiEdit />,
-            onClick: handleEdit,
-          },
+                        {
+                            key: "edit",
+                            label: "Edit",
+                            icon: <BiEdit />,
+                            onClick: handleEdit,
+                        },
 
-          {
-            key: "delete",
-            label: "Delete",
-            icon: <MdDeleteForever />,
-            type: "delete",
-            onClick: handleDelete,
-          },
-        ]}
+                        {
+                            key: "delete",
+                            label: "Delete",
+                            icon: <MdDeleteForever />,
+                            type: "delete",
+                            onClick: handleDelete,
+                        },
+                    ]}
 
-        addButton={{
-          label: "Add New",
-          onClick: handleAdd,
-        }}
+                    addButton={{
+                        label: "Add New",
+                        onClick: handleAdd,
+                    }}
 
-        pagination={{
-          page: page,
-          total: vehicleTypes.length,
-          totalPages: totalPages,
-        }}
+                    pagination={{
+                        page: page,
+                        total: vehicleTypes.length,
+                        totalPages: totalPages,
+                    }}
 
-        onPageChange={(newPage) => {
-          setPage(newPage);
-        }}
-
-      />
-
-
-
+                    onPageChange={(newPage) => {
+                        setPage(newPage);
+                    }}  />
+            </div>
             {openModal && (
                 <div className="modal_overlay">
                     <div className="modal_box">
@@ -324,7 +321,8 @@ export default function VehicleType() {
                         <div className="Header">
 
                             <h2>
-                                {mode === "add" ? "Add Vehicle Type" : mode === "edit" ? "Edit Vehicle Type" : "View Vehicle Type"}
+                                {mode === "add" ? "Add Vehicle Type" : mode === "edit" 
+                                ? "Edit Vehicle Type" : "View Vehicle Type"}
                             </h2>
 
                             <button

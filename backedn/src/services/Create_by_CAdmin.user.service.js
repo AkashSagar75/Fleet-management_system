@@ -14,25 +14,22 @@ class CreateUserServices {
       last_name,
       email,
       phone,
-      password
+      password,
+      userId,
+      Roleid,
+      action
     } = data;
 
 
-    // 1️⃣ Email check
+    // Only new users need the duplicate-email lookup.
+    if (action == true) {
+      const existingUser = await this.userRepository.findByEmail(connection, email);
 
-    const existingUser =
-      await this.userRepository.findByEmail(
-        email
-      );
-
-    if (existingUser) {
-
-      const error =
-        new Error("Email already exists");
-
-      error.statusCode = 409;
-
-      throw error;
+      if (existingUser) {
+        const error = new Error("Email already exists");
+        error.statusCode = 409;
+        throw error;
+      }
     }
 
 
@@ -57,7 +54,10 @@ class CreateUserServices {
           lastName: last_name,
           email,
           phone,
-          password: hashedPassword
+          password: hashedPassword,
+          userId,
+          Roleid,
+          action
         }
       );
 
