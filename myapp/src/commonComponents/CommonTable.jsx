@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+ import { useEffect, useState } from "react";
 import "../assets/CSS/CommonTable.css";
 import { getData } from "../Api/common";
 
