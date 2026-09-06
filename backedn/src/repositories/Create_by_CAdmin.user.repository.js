@@ -13,43 +13,6 @@ class CreateCAdminUserRepository {
 
         return rows[0] || null;
     };
-
-
-    // async create( data) {
-    //     const { companyId, firstName, lastName, email, password, phone,role_name} = data;
-            
-    //       const connection = await this.db.getConnection();
-    //  try{
-    //     await connection.beginTransaction();
-
-    //       const sql = `insert into roles (company_id, role_name) values(?,?)`;
-
-    //     const [roleResults] = await connection.query(sql,[companyId,role_name])
-    //      const roleId = roleResults.insertId;
-
-    //      const User_sql =   `  INSERT INTO users  ( company_id, role_id, first_name,  last_name, email,  password,   phone,  status, user_status )
-    //          VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?) `;
-    //           const [userResults] = await connection.query(User_sql,[  companyId, roleId, firstName, lastName, email, password, phone ])
-
-    //            await connection.commit();
-    //            return {
-    //   userId: userResults.insertId,
-    //   roleId: roleId
-    // };
-
-    //  }
-    //  catch(err)
-    //  {
-    // await connection.rollback();
-    // throw err;
-    //  }
-    //  finally{
-    //      connection.release();
-    //  }
-         
-
-         
-    // };
 async create(connection, data) {
 
   const {
@@ -99,21 +62,31 @@ async create(connection, data) {
 
       return { userId: userResult.insertId, roleId, message: "User created successfully", };
     }
-    else {
+    async update(connection, data) {
+      const {
+        userId,
+        companyId,
+        firstName,
+        lastName,
+        email,
+        phone,
+        roleId
+      } = data;
+
       const [existingUser] = await connection.query(
         `SELECT id  FROM users 
       WHERE id = ? AND company_id = ? AND role_id = ?
     `,
-        [userId, companyId,Roleid]
+        [userId, companyId, roleId]
       );
       if (existingUser.length === 0) {
         throw new Error("User not found");
       }
       const [userResult] = await connection.query(
         ` UPDATE users  SET first_name = ?,  last_name = ?, email = ?,  phone = ?
-    WHERE id = ? AND company_id = ? AND Role_id = ?
+    WHERE id = ? AND company_id = ? AND role_id = ?
     `,
-        [firstName, lastName, email, phone, userId, companyId,Roleid]
+        [firstName, lastName, email, phone, userId, companyId, roleId]
       );
 
       return {
@@ -125,6 +98,6 @@ async create(connection, data) {
     }
   }
 
-}
+
 
 module.exports = CreateCAdminUserRepository
