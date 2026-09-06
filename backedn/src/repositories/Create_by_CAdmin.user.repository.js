@@ -11,59 +11,84 @@ class CreateCAdminUserRepository {
       [email]
     );
 
-    return rows[0] || null;
-  };
+        return rows[0] || null;
+    };
 
 
-  // async create( data) {
-  //     const { companyId, firstName, lastName, email, password, phone,role_name} = data;
+    // async create( data) {
+    //     const { companyId, firstName, lastName, email, password, phone,role_name} = data;
+            
+    //       const connection = await this.db.getConnection();
+    //  try{
+    //     await connection.beginTransaction();
 
-  //       const connection = await this.db.getConnection();
-  //  try{
-  //     await connection.beginTransaction();
+    //       const sql = `insert into roles (company_id, role_name) values(?,?)`;
 
-  //       const sql = `insert into roles (company_id, role_name) values(?,?)`;
+    //     const [roleResults] = await connection.query(sql,[companyId,role_name])
+    //      const roleId = roleResults.insertId;
 
-  //     const [roleResults] = await connection.query(sql,[companyId,role_name])
-  //      const roleId = roleResults.insertId;
+    //      const User_sql =   `  INSERT INTO users  ( company_id, role_id, first_name,  last_name, email,  password,   phone,  status, user_status )
+    //          VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?) `;
+    //           const [userResults] = await connection.query(User_sql,[  companyId, roleId, firstName, lastName, email, password, phone ])
 
-  //      const User_sql =   `  INSERT INTO users  ( company_id, role_id, first_name,  last_name, email,  password,   phone,  status, user_status )
-  //          VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?) `;
-  //           const [userResults] = await connection.query(User_sql,[  companyId, roleId, firstName, lastName, email, password, phone ])
+    //            await connection.commit();
+    //            return {
+    //   userId: userResults.insertId,
+    //   roleId: roleId
+    // };
 
-  //            await connection.commit();
-  //            return {
-  //   userId: userResults.insertId,
-  //   roleId: roleId
-  // };
+    //  }
+    //  catch(err)
+    //  {
+    // await connection.rollback();
+    // throw err;
+    //  }
+    //  finally{
+    //      connection.release();
+    //  }
+         
 
-  //  }
-  //  catch(err)
-  //  {
-  // await connection.rollback();
-  // throw err;
-  //  }
-  //  finally{
-  //      connection.release();
-  //  }
+         
+    // };
+async create(connection, data) {
 
+  const {
+    companyId,
+    firstName,
+    lastName,
+    email,
+    password,
+    phone,
+    role_name
+  } = data;
 
+  // 1️⃣ Role insert
+  const [roleResult] = await connection.query(
+    `
+    INSERT INTO roles
+    (
+      company_id,
+      role_name
+    )
+    VALUES (?, ?)
+    `,
+    [companyId, role_name]
+  );
 
-  // };
-  async create(connection, data) {
+  const roleId = roleResult.insertId;
 
-    const { companyId,userId, firstName, lastName, email, password, phone, role_name,Roleid, action } = data;
-
-
-    if (action == true) {
-      const [roleResult] = await connection.query(
-        ` INSERT INTO roles  (  company_id,  role_name  ) VALUES (?, ?)  `,
-        [companyId, role_name]
-      );
-      const roleId = roleResult.insertId;
-      // 2️⃣ User insert
-      const [userResult] = await connection.query(
-        ` INSERT INTO users ( company_id, role_id, first_name, last_name, email, password, phone,
+  // 2️⃣ User insert
+  const [userResult] = await connection.query(
+    `
+    INSERT INTO users
+    (
+      company_id,
+      role_id,
+      first_name,
+      last_name,
+      email,
+      password,
+      phone,
       status,
       user_status
     )

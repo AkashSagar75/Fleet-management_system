@@ -1,5 +1,6 @@
- import React from "react";
+import { useEffect, useState } from "react";
 import "../assets/CSS/CommonTable.css";
+import { getData } from "../Api/common";
 
 const CommonTable = ({
   columns = [],
@@ -10,12 +11,54 @@ const CommonTable = ({
   addButton = null,
   pagination = null,
   onPageChange,
+  tableName,
+  companyId,
+  searchColumns = [],
+  pageSize = 10,
 }) => {
-  const safeData = Array.isArray(data) ? data : [];
+  const isApiTable = Boolean(tableName && companyId);
+  const [apiData, setApiData] = useState([]);
+  const [apiPagination, setApiPagination] = useState({
+    page: 1,
+    limit: pageSize,
+    total: 0,
+    totalPages: 1,
+  });
+  const [search, setSearch] = useState("");
+  const [apiLoading, setApiLoading] = useState(true);
+  const [apiError, setApiError] = useState("");
 
-  const totalColumns =
-    columns.length + (actions.length > 0 ? 1 : 0);
+  useEffect(() => {
+    if (!isApiTable) return;
 
+    let cancelled = false;
+    getData({ tableName,  companyId, page: apiPagination.page, limit: apiPagination.limit,
+      search,
+      searchColumns,
+    })
+      .then((response) => {
+        if (cancelled) return;
+        setApiData(Array.isArray(response) ? response : response?.data || []);
+        if (response?.pagination) setApiPagination(response.pagination);
+      })
+      .catch(() => {
+        if (!cancelled) setApiError("Unable to load records");
+      })
+      .finally(() => {
+        if (!cancelled) setApiLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [companyId, isApiTable, search, searchColumns, tableName, apiPagination.page, apiPagination.limit]);
+
+  const safeData = isApiTable ? apiData : Array.isArray(data) ? data : [];
+  const tablePagination = isApiTable ? apiPagination : pagination;
+  const tableLoading = isApiTable ? apiLoading : loading;
+
+  const totalColumns =  columns.length + (actions.length > 0 ? 1 : 0);
+ 
   return (
     <div className="common-table-wrapper">
 
@@ -37,8 +80,8 @@ const CommonTable = ({
           )}
 
           <div className="table-record-info">
-            {pagination?.total !== undefined
-              ? `Showing ${safeData.length} of ${pagination.total} records`
+            {tablePagination?.total !== undefined
+              ? `Showing ${safeData.length} of ${tablePagination.total} records`
               : `${safeData.length} records`}
           </div>
 
@@ -48,9 +91,17 @@ const CommonTable = ({
         <div className="table-toolbar-actions">
 
           <input
-            type="text"
+            type="search"
             placeholder="Search..."
             className="table-search"
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              if (isApiTable) {
+                setApiLoading(true);
+                setApiPagination((current) => ({ ...current, page: 1 }));
+              }
+            }}
           />
 
           <button
@@ -97,7 +148,7 @@ const CommonTable = ({
           <tbody>
 
             {/* LOADING */}
-            {loading && (
+            {tableLoading && (
               <tr>
                 <td
                   colSpan={totalColumns}
@@ -109,19 +160,19 @@ const CommonTable = ({
             )}
 
             {/* EMPTY */}
-            {!loading && safeData.length === 0 && (
+            {!tableLoading && safeData.length === 0 && (
               <tr>
                 <td
                   colSpan={totalColumns}
                   className="table-message"
                 >
-                  {emptyMessage}
+                  {apiError || emptyMessage}
                 </td>
               </tr>
             )}
 
             {/* DATA */}
-            {!loading &&
+            {!tableLoading &&
               safeData.length > 0 &&
               safeData.map((row, rowIndex) => (
 
@@ -175,24 +226,27 @@ const CommonTable = ({
       </div>
 
       {/* ================= PAGINATION ================= */}
-      {pagination && (
+      {tablePagination && (
         <div className="table-pagination">
 
           <span>
-            Page {pagination.page} of{" "}
-            {pagination.totalPages}
+            Page {tablePagination.page} of{" "}
+              {tablePagination.totalPages}
           </span>
 
           <div className="pagination-buttons">
 
             <button
               type="button"
-              disabled={pagination.page <= 1}
-              onClick={() =>
-                onPageChange?.(
-                  pagination.page - 1
-                )
-              }
+              disabled={tablePagination.page <= 1}
+              onClick={() => {
+                const nextPage = tablePagination.page - 1;
+                if (isApiTable) {
+                  setApiLoading(true);
+                  setApiPagination((current) => ({ ...current, page: nextPage }));
+                }
+                onPageChange?.(nextPage);
+              }}
             >
               Previous
             </button>
@@ -200,14 +254,17 @@ const CommonTable = ({
             <button
               type="button"
               disabled={
-                pagination.page >=
-                pagination.totalPages
+                tablePagination.page >=
+                tablePagination.totalPages
               }
-              onClick={() =>
-                onPageChange?.(
-                  pagination.page + 1
-                )
-              }
+              onClick={() => {
+                const nextPage = tablePagination.page + 1;
+                if (isApiTable) {
+                  setApiLoading(true);
+                  setApiPagination((current) => ({ ...current, page: nextPage }));
+                }
+                onPageChange?.(nextPage);
+              }}
             >
               Next
             </button>
