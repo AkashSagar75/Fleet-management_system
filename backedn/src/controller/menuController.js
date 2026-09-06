@@ -110,7 +110,9 @@ exports.getMenus = async (req, res) => {
     // =========================
     // SUPER ADMIN
     // =========================
-    if (role.is_system_role == 1) {
+    const hasCompanyType = company_type_id && company_type_id !== "null" && company_type_id !== "undefined";
+
+    if (role.is_system_role == 1 && !hasCompanyType) {
 
       sql = `
         SELECT DISTINCT

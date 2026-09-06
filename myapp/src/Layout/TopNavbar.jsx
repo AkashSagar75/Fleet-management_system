@@ -3,26 +3,25 @@ import   {useState} from "react";
 import { useNavigate } from "react-router-dom";
  import {logout} from '../Api/auth.api'
 import {  Bell, Moon,} from "lucide-react";
-import { useSelector } from "react-redux";
+ 
+import {useUser} from "../Context/role.jsx";
 import notificationService from "../Common/notificationService";
 
 export default function TopNavbar({collapsed,}) 
 {
-    const user = useSelector((state) => state.user);
+    const { User } = useUser();
    const navigate = useNavigate();
  const [sidedropdown, setSideDropdown] = useState(false)
  function onfocusfunction()
  {
    setSideDropdown(prev => !prev);
  }
-
-
  
 const logoutf = async ( ) =>
 {
   const refreshToken = sessionStorage.getItem('refreshToken');
   try {
-    console.log("token",refreshToken);
+    
      const res = await logout(refreshToken);
         sessionStorage.clear();
         navigate("/");
@@ -39,7 +38,7 @@ const logoutf = async ( ) =>
 
   {/* LEFT */}
   <div>
-    <h1 className="text-2xl font-bold text-slate-800">  {user?.name } </h1>
+    <h1 className="text-2xl font-bold text-slate-800"> {User?.user?.name} </h1>
   </div>
 
   {/* RIGHT */}

@@ -6,9 +6,7 @@ const getUserInfo = () => {
     {
          return null;
     }
-
     try {
-
         return data ? JSON.parse(data) : null;
     } catch (error) {
        console.error("Invalid user data in sessionStorage");

@@ -6,17 +6,15 @@ import notificationService from "../../Common/notificationService.js";
 
 const userColumns = [
   {
-    key: "name",
+    key: "first_name",
     label: "User",
+    render: (row) => `${row.first_name || ""} ${row.last_name || ""}`.trim() || "-",
   },
   {
     key: "email",
     label: "Email",
   },
-  {
-    key: "role",
-    label: "Role",
-  },
+  
   {
     key: "phone",
     label: "Phone",
@@ -26,13 +24,13 @@ const userColumns = [
     label: "Status",
   },
   {
-    key: "createdAt",
+    key: "created_at",
     label: "Created On",
   },
 ];
 export default function User() {
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
 
   const [openModal, setOpenModal] = useState(false);
   const [mode, setMode] = useState('Add')
@@ -49,6 +47,7 @@ export default function User() {
     action: true, // Add
   };
   const [formdata, setFormData] = useState(initialFormData)
+  const companyId = user?.User?.user?.company_id || user?.company_id;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -100,7 +99,6 @@ export default function User() {
   };
   const okButton = async (e) => {
     e.preventDefault();
-    const companyId = user?.company_id;
     if (!companyId) {
       notificationService.error("Company information is missing. Please log in again.");
       return;
@@ -116,13 +114,7 @@ export default function User() {
     try {
       const response = await CreateUser(Payload);
       if (response) {
-        const savedUser = response?.data || response;
-        setUsers((currentUsers) => {
-          if (Payload.action) return [...currentUsers, savedUser];
-          return currentUsers.map((currentUser) =>
-            currentUser.id === Payload.userId ? savedUser : currentUser
-          );
-        });
+        setTableRefreshKey((currentKey) => currentKey + 1);
         setOpenModal(false);
         setFormData(initialFormData);
       }
@@ -150,10 +142,13 @@ export default function User() {
 
         <h1>Create User & Role </h1>
 
-        <CommonTable
+        {/* <CommonTable
           columns={userColumns}
-          data={users}
+          key={tableRefreshKey}
           loading={loading}
+          tableName="users"
+          companyId={companyId}
+          searchColumns={["first_name", "last_name", "email", "phone", "role_name", "status"]}
           actions={[
             {
               key: "Edit",
@@ -173,13 +168,41 @@ export default function User() {
             label: "Add New",
             onClick: handleAddUser,
           }}
-          pagination={{
-            page: 1,
-            total: 22,
-            totalPages: 3,
-          }}
           onPageChange={handlePageChange}
-        />
+        /> */}
+
+        <CommonTable  tableName="users" companyId={companyId} columns={userColumns}
+      searchColumns={[
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "role_name",
+    "status",
+  ]}
+  pageSize={10}
+  actions={[
+    {
+      key: "edit",
+      label: "Edit",
+      icon: "✏️",
+      type: "edit",
+      onClick: handleEdit,
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      icon: "🗑️",
+      type: "delete",
+      onClick: handleDelete,
+    },
+  ]}
+  addButton={{
+    label: "Add New",
+    onClick: handleAddUser,
+  }}
+  onPageChange={handlePageChange}
+/>
       </div>
       {openModal && (
         <div className="modal_overlay">
